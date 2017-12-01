@@ -1,2 +1,71 @@
 http://www.jianshu.com/p/ef7d0e16d999
 recycleview brvah开源库中对于加载图片的性能优化
+
+
+为避免网址失效，一下为复制的原文：
+
+1.前言
+
+最近将Glide3.8升级到4.0，除了使用上有细微的调整，过渡还是很流畅的。但是在替换完，并体验到新特性带来的便利后，测试反馈了个现象，标记为Bug让修复。以下记录分析问题和解决问题的过程，希望对大家有一定的帮助。若有更好的方法，欢迎在评论中指出，大家共同探讨。
+
+2.常见现象
+
+界面很简单就不上图了，大概描述一下。一个横向的RecyclerView中展示一堆Item，每个Item分别包含纵向排布的圆形头像和名字。根据用户的操作，会向其中添加、删除和更新某些或某个Item。由于是对数据操作，肯定得刷新RecyclerView的Adapter。这时，会导致Item先显示底色或占位图，再渐显地加载图像。
+
+
+Glide.png
+由于官方给出说明，有三种圆形ImageView会与Glide的方法产生问题，建议使用BitmapTransformation，或.dontAnimate()取消加载过渡动画，又或者4.0中的.circleCrop()裁剪图像。本人亲测，谷歌官方v4包中的RoundedBitmapDrawable也是支持Glide的，不知道的同学可以参考小菜希的Blog。
+
+然而，在按文档修改完后，问题仍然出现了。这是什么原因呢？仅仅只是升级Glide，并没有改变业务逻辑啊，难道是新版Glide的原因。排除自己使用错了，不可能还原回去，指望着它的新特性解决问题呢。
+
+3.解决方案
+
+经过向谷歌询问N遍，发现很可能是RecyclerView的使用姿势不对。就几种常见情况给大家分析一下：
+
+3.1.全局刷新
+
+当你使用.notifyDataSetChanged()刷新列表时，会更新所有的数据。耗资源不说，关键是整个界面图像重新加载，给用户莫名其妙的感觉，影响体验和心情。
+
+都知道RecyclerView的Item是可以复用，但是如何复用，可能就不大清楚了。每个Item被复用是随机的，它移出屏幕外被回收后，等待再次使用。全局刷新，会让回收的Item加载内容，没回收的可能内容被别的Item先加载了，只能回收后加载。一瞬间Item的位置全乱了，都得重新加载内容，尤其图像加载较慢，你就感觉整个世界胡乱地闪了一下。
+
+知道原因，想解决就不难了。给每个Item一个固定的ID，刷新时与位置对应，别瞎跑就可以了。重写Adapter的getItemId(int position)方法，返回position作为ID，然后再设置Adapter的setHasStableIds(true)即可。
+
+3.2.局部刷新
+
+对RecyclerView了解比较多的人都知道，它的Adapter新增了不少局部刷新的方法，具体如下：
+
+notifyItemChanged(int position) 更新列表position位置上的数据时调用，伴有渐变动画效果
+notifyItemInserted(int position) 列表position位置添加一条数据时调用，伴有动画效果
+notifyItemRemoved(int position) 列表position位置移除一条数据时调用，伴有动画效果
+notifyItemMoved(int fromPosition, int toPosition) 列表fromPosition位置的数据移到toPosition位置时调用，伴有动画效果
+notifyItemRangeChanged(int positionStart, int itemCount) 列表从positionStart位置到itemCount数量的列表项进行数据刷新，伴有渐变动画效果
+notifyItemRangeInserted(int positionStart, int itemCount) 列表从positionStart位置到itemCount数量的列表项批量添加数据时调用，伴有动画效果
+notifyItemRangeRemoved(int positionStart, int itemCount) 列表从positionStart位置到itemCount数量的列表项批量删除数据时调用，伴有动画效果
+使用局部刷新解决了Item错乱的问题，并且减少了额外的资源消耗，可是闪烁仍然存在。只不过导致的原因变了，是由于渐变动画效果增加了展示图像的时间。所以解决方法也很简单，就是取消或屏蔽过渡动画。提供两种常用的方法供大家参考：
+
+// 第一种，直接取消动画
+ItemAnimator animator = recyclerView.getItemAnimator();
+if (animator instanceof SimpleItemAnimator) {
+  ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
+}
+// 老版本的支持库
+recyclerView.getItemAnimator().setSupportsChangeAnimations(false);
+
+// 第二种，设置动画时间为0
+recyclerView.getItemAnimator().setSupportsChangeAnimations(false);
+4.性能优化
+
+若你觉得解决问题就完了，那么下面的可以不用看了。
+
+细心的朋友会发现RecyclerView的Adapter还有一个方法没有讲，那就是notifyItemChanged(int position, Object payload)。payload对象有啥用？怎么用？别着急，听我慢慢道来。
+
+当你只想对Item中的名字进行更改，那么刷新Item会重复加载图像，哪怕已经缓存了，可毕竟还是消耗资源。如何才能仅仅更新Item中的某一项嘞，方法是有的。刷新其实是调用Adapter的onBindViewHolder(RecyclerView.ViewHolder holder, int position)方法，当你重写时会发现还有一个类似的方法onBindViewHolder(RecyclerView.ViewHolder holder, int position, List payloads)，现在知道payload对象是干嘛用的了吧。你可以在重写时对payload进行判断，从而更新Item中不同的项，枚举类型是个不错的选择。
+
+5.总结
+
+主要的都讲完了，通过这篇文章反映了解决问题的思路，希望能对大家有所启发。最后，忍不住偷偷透露一下，若你想同时进行增加、移动和修改，并且都得带上动画咋办？谷歌Support Library提供了DiffUtil工具类来比较每一项的变化，真是良心之作，还不知道的点击这里。
+
+作者：lanceJin
+链接：http://www.jianshu.com/p/ef7d0e16d999
+來源：简书
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
