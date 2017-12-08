@@ -1,0 +1,42 @@
+I am using a native library that includes opencv. The library builds well and works well in all devices and emulators, but not on Android 4.2 ones. It crashes on System.loadLibrary("mylib");.
+
+The library is built for armeabi-v7a armeabi x86 mips (I see in the jnilibs folder that all the so files were generated)
+
+I am stuck on this bug because I couldn't find any answer on the internet which could explain my problem.
+
+Cannot load library: soinfo_link_image(linker.cpp:1635): could not load library "libopencv_java.so", log trace:
+
+1755-1755/com.ex.app E/AndroidRuntime﹕ FATAL EXCEPTION: main
+   java.lang.UnsatisfiedLinkError: Cannot load library: soinfo_link_image(linker.cpp:1635): could not load library "libopencv_java.so" needed by "libmylib.so"; caused by load_library(linker.cpp:745): library "libopencv_java.so" not found
+           at java.lang.Runtime.loadLibrary(Runtime.java:371)
+           at java.lang.System.loadLibrary(System.java:535)
+           at com.ex.app.core.MyApplication.initVippAsync(MyApplication.java:198)
+           at com.ex.app.core.MyApplication.onCreate(MyApplication.java:100)
+           at android.app.Instrumentation.callApplicationOnCreate(Instrumentation.java:1000)
+           at android.app.ActivityThread.handleBindApplication(ActivityThread.java:4391)
+           at android.app.ActivityThread.access$1300(ActivityThread.java:141)
+           at android.app.ActivityThread$H.handleMessage(ActivityThread.java:1294)
+           at android.os.Handler.dispatchMessage(Handler.java:99)
+           at android.os.Looper.loop(Looper.java:137)
+           at android.app.ActivityThread.main(ActivityThread.java:5039)
+           at java.lang.reflect.Method.invokeNative(Native Method)
+           at java.lang.reflect.Method.invoke(Method.java:511)
+           at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:793)
+           at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:560)
+           at dalvik.system.NativeStart.main(Native Method)
+           
+           
+
+
+
+12
+down vote
+accepted
+I found my answer. It's two steps:
+
+1/ If you're using an emulator Genymotion, with an Android 4.2.2, you will have a missing library, caused by one of the updates of Genimotion. See this. Solution : (1)> download the following zip file: here. (2)> simply drag and drop it to your emulator. (3)> restart your emulator.
+
+2/ In the Android 4.2 the OS has problems to find paths to jni libraries shipped in the apk. For example in my case, I am using a jni library that uses the openCV library. For every device and android version calling System.loadLibrary("mylib"); worked well and mylib loaded automatically the opencv library. For the Android 4.2, as @Chris said in his comment, I loaded openCV explicitly, so :
+
+System.loadLibrary("opencv_java");
+System.loadLibrary("mylib");
