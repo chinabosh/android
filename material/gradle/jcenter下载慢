@@ -1,0 +1,5 @@
+ repositories {
+        maven{url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+    }
+    替换更目录的build.gradle
+    使用阿里云的开源maven库
