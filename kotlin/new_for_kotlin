@@ -21,4 +21,16 @@
    inv() – 反向
 11.和 Java 不一样，Kotlin 中的 Char 不能直接和数字操作，Char 必需是单引号''包含起来的。比如普通字符 '0'，'a'。
 12.与 Java 不同的是，Kotlin 中数组是不型变的（invariant）。
-13.
+13.Kotlin 支持三个引号 """ 扩起来的字符串，支持多行字符串，比如：
+      fun main(args: Array<String>) {
+          val text = """
+          多行字符串
+          多行字符串
+          """
+          println(text)   // 输出有一些前置空格
+      }
+14.when 相当于switch语句，也可以用来替代多个的if-else语句
+15.   for ((index, value) in array.withIndex()) {
+       println("the element at $index is $value")
+   }
+16.
