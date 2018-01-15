@@ -33,4 +33,60 @@
 15.   for ((index, value) in array.withIndex()) {
        println("the element at $index is $value")
    }
-16.
+16.我们也可以定义一个空类：
+   class Empty
+17.我们可以像使用普通函数那样使用构造函数创建类实例：
+   val site = Runoob() // Kotlin 中没有 new 关键字
+18.类属性定义
+      class Person {
+
+          var lastName: String = "zhang"
+              get() = field.toUpperCase()   // 将变量赋值后转换为大写
+              set
+
+          var no: Int = 100
+              get() = field                // 后端变量
+              set(value) {
+                  if (value < 10) {       // 如果传入的值小于 10 返回该值
+                      field = value
+                  } else {
+                      field = -1         // 如果传入的值大于等于 10 返回 -1
+                  }
+              }
+
+          var heiht: Float = 145.4f
+              private set
+      }
+19.Kotlin 中所有类都继承该 Any 类，它是所有类的超类，对于没有超类型声明的类是默认超类：
+20.在基类中，使用fun声明函数时，此函数默认为final修饰，不能被子类重写。如果允许子类重写该函数，那么就要手动添加 open 修饰它, 
+   子类重写方法使用 override 关键词：
+21.扩展函数
+   扩展函数可以在已有类中添加新的方法，不会对原类做修改，扩展函数定义形式：
+   fun receiverType.functionName(params){
+       body
+   }
+22.   泛型，即 "参数化类型"，将类型参数化，可以用在类，接口，方法上。
+   与 Java 一样，Kotlin 也提供泛型，为类型安全提供保证，消除类型强转的烦恼。
+   声明一个泛型类:
+   class Box<T>(t: T) {
+       var value = t
+   }
+23.声明处的类型变异使用协变注解修饰符：in、out，消费者 in, 生产者 out。
+   使用 out 使得一个类型参数协变，协变类型参数只能用作输出，可以作为返回值类型但是无法作为入参的类型：
+   // 定义一个支持协变的类
+   class Runoob<out A>(val a: A) {
+       fun foo(): A {
+           return a
+       }
+   }
+
+   fun main(args: Array<String>) {
+       var strCo: Runoob<String> = Runoob("a")
+       var anyCo: Runoob<Any> = Runoob<Any>("b")
+       anyCo = strCo
+       println(anyCo.foo())   // 输出 a
+   }
+
+
+
+
