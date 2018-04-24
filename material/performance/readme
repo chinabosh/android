@@ -1,0 +1,246 @@
+关于专题  
+   本专题将深入研究Android的高性能编程方面，其中涉及到的内容会有Android内存优化，算法优化，Android的界面优化，Android指令级优化，以及Android应用内存占用分析，还有一些其他有关高性能编程的知识.
+    随着技术的发展，智能手机硬件配置越来越高，可是它和现在的 PC 相比，其运算能力，续航能力，存储空间等都还是受到很大的限制，同时用户对手机的体验要求远远高于 PC 的桌面应用程序。以上理由，足以需要开发人员更加专心去实现和优化你的代码了。选择合适的算法和数据结构永远是开发人员最先应该考虑的事情。同时，我们应该时刻牢记，写出高效代码的两条基本的原则：（1）不要做不必要的事；（2）不要分配不必要的内存。
+      高效的代码由两点的来决定：1.高效的数据结构 ；2高效的执行算法。所以我们在做应用性能优化的时候，要从各个方面考虑现有的数据结构是否适合当前的功能或者产品，还有就是现有的执行算法是否高效。
+     
+     今天第一篇文章，主要给大家分享一些高性能编程的基础知识，其中结合了一些网友和官网的总结分析。
+     先推荐一本大神的书：Pro Android Apps Performance Optimization 
+    
+  内存优化
+      
+      Android系统对每个软件所能使用的RAM空间进行了限制（如：Nexus one 对每个软件的内存限制是24M），同时 Java 语言本身比较消耗内存，dalvik 虚拟机也要占用一定的内存空间，所以合理使用内存，彰显出一个程序员的素质和技能。
+     （1）了解 JIT
+　　即时编译（Just-in-time Compilation，JIT），又称动态转译（Dynamic Translation），是一种通过在运行时将字节码翻译为机器码，从而改善字节码编译语言性能的技术。即时编译前期的两个运行时理论是字节码编译和动态编译。Android 原来 Dalvik 虚拟机是作为一种解释器实现，新版（Android 2.2+）将换成 JIT 编译器实现。性能测试显示，在多项测试中新版本比旧版本提升了大约 6 倍。
+       （2）避免创建不必要的对象
+　　就像世界上没有免费的午餐，世界上也没有免费的对象。虽然 gc 为每个线程都建立了临时对象池，可以使创建对象的代价变得小一些，但是分配内存永远都比不分配内存的代价大。如果你在用户界面循环中分配对象内存，就会引发周期性的垃圾回收，用户就会觉得界面像打嗝一样一顿一顿的。所以，除非必要，应尽量避免尽力对象的实例。下面的例子将帮助你理解这条原则：当你从用户输入的数据中截取一段字符串时，尽量使用 substring 函数取得原始数据的一个子串，而不是为子串另外建立一份拷贝。这样你就有一个新的 String 对象，它与原始数据共享一个 char 数组。 如果你有一个函数返回一个 String 对象，而你确切的知道这个字符串会被附加到一个 StringBuffer，那么，请改变这个函数的参数和实现方式， 直接把结果附加到 StringBuffer 中，而不要再建立一个短命的临时对象。
+　　一个更极端的例子是，把多维数组分成多个一维数组：
+　　int 数组比 Integer 数组好，这也概括了一个基本事实，两个平行的 int 数组比 (int,int) 对象数组性能要好很多。同理，这适用于所有基本类型的组合。如果你想用一种容器存储 (Foo,Bar) 元组，尝试使用两个单独的 Foo[] 数组和 Bar[] 数组，一定比 (Foo,Bar) 数组效率更高。（也有例外的情况，就是当你建立一个 API，让别人调用它的时候。这时候你要注重对 API 接口的设计而牺牲一点儿速度。当然在 API 的内部，你仍要尽可能的提高代码的效率）
+　　总体来说，就是避免创建短命的临时对象。减少对象的创建就能减少垃圾收集，进而减少对用户体验的影响。
+      （3）静态方法代替虚拟方法
+　　如果不需要访问某对象的字段，将方法设置为静态，调用会加速 15% 到 20%。这也是一种好的做法，因为你可以从方法声明中看出调用该方法不需要更新此对象的状态。从Smali指令级别来看，调用实例方法的指令时invoke-virtual 而调用静态方法的指令是invoke-static.两个指令的区别在于invoke-virtual需要多一个本地寄存器(用于存当前对象this)。后期会对smali指令集优化做详细的介绍
+     （4）避免内部 Getters/Setters
+　　在源生语言像 C++ 中，通常做法是用 Getters(i=getCount()) 代替直接字段访问 (i=mCount)。这是 C++ 中一个好的习惯，因为编译器会内联这些访问，并且如果需要约束或者调试这些域的访问，你可以在任何时间添加代码。而在 Android 中，这不是一个好的做法。虚方法调用的代价比直接字段访问高昂许多。通常根据面向对象语言的实践，在公共接口中使用 Getters 和 Setters 是有道理的，但在一个字段经常被访问的类中宜采用直接访问。无 JIT 时，直接字段访问大约比调用 getter 访问快 3 倍。有 JIT 时（直接访问字段开销等同于局部变量访问），要快7倍。从Smali指令级别上来看，调用虚函数的指令时invoke-virtual，而直接访问类变量的指令时iget，从官网的介绍来看，就说明iget指令的执行效果要比invoke-virtual高很多.
+     （5）在多次调用全局变量的函数里，将全局变量赋值给本地变量
+　　访问成员变量比访问本地变量慢得多，下面一段代码：
+
+[java] view plain copy
+for(int i =0; i <this.mCount; i++)  {  
+   dumpItem(this.mItems);  
+}  
+        最好改成这样：
+
+[java] view plain copy
+int count = this.mCount;  
+Item[] items = this.mItems;  
+for(int i =0; i < count; i++)  {  
+   dumpItems(items);  
+}  
+
+　　另一个相似的原则是：永远不要在 for 的第二个条件中调用任何方法。如下面方法所示，在每次循环的时候都会调用 getCount() 方法，这样做比你在一个 int 先把结果保存起来开销大很多。
+
+
+[java] view plain copy
+for(int i =0; i < this.getCount(); i++) {  
+  dumpItems(this.getItem(i));  
+    }  
+　　同样如果你要多次访问一个变量，也最好先为它建立一个本地变量，例如：
+ 
+[java] view plain copy
+public void useGlobalVariable() {  
+       mViewGroup.addStatesFromChildren();  
+    mViewGroup.bringToFront();  
+       mViewGroup.animate();  
+       mViewGroup.buildLayer();  
+   }  
+
+　　这里有 4 次访问成员变量 mViewGroup，如果将它缓存到本地，4 次成员变量访问就会变成 4 次效率更高的本地变量访问。
+　　另外就是方法的参数与本地变量的效率相同。(传入参数和本地变量执行效果是相同的),在smli指令上来看，本地寄存器为v0,v1,v2... ,参数寄存器为p0,p1,p2
+      如果不想再函数内频繁申明本地变量，那最好将全局变量作为参数传入函数。和声明本地变量效率是一样的，甚至是更高。因为少了将全局变量赋给本地变量的指令执行。具体效率对比，后期慢慢来讲。
+性能优化
+（1）对常量使用 static final 修饰符
+　　让我们来看看这两段在类前面的声明：
+[java] view plain copy
+           
+static int intVal = 42;  
+static String strVal = "Hello, world!";  
+static String strVal = "Hello, world!";  
+
+
+必以其会生成一个叫做 clinit 的初始化类的方法，当类第一次被使用的时候这个方法会被执行。方法会将 42 赋给 intVal，然后把一个指向类中常量表的引用赋给 strVal。当以后要用到这些值的时候，会在成员变量表中查找到他们。 下面我们做些改进，使用“final”：
+[java] view plain copy
+static final int intVal = 42;  
+static final String strVal = "Hello, world!";  
+
+现在，类不再需要 clinit 方法，因为在成员变量初始化的时候，会将常量直接保存到类文件中。用到 intVal 的代码被直接替换成 42，而使用 strVal 的会指向一个字符串常量，而不是使用成员变量。
+　　将一个方法或类声明为 final 不会带来性能的提升，但是会帮助编译器优化代码。举例说，如果编译器知道一个 getter 方法不会被重载，那么编译器会对其采用内联调用。
+　　你也可以将本地变量声明为 final，同样，这也不会带来性能的提升。使用“final”只能使本地变量看起来更清晰些（但是也有些时候这是必须的，比如在使用匿名内部类的时候）。看看编译后的smali文件
+        .field static intVal:I = 0x0
+        .field static strVal:Ljava/lang/String;
+       以上两个指令是未声明final的。我们可以发现，在编译之后，两个变量都是初始化值，并没有赋给在Java文件中声明的值，这就说明这些值只有在类文件被使用的时候，执行clinit的时候，才会进行赋值
+        .field static final sintVal:I = 0x1a6
+        .field static final sstrVal:Ljava/lang/String; = "Hello, world!"
+     而这两个指令是声明了final的指令，我们可以发现，编译完成之后，这两个变量已经具有了声明的值，这就说明不需要Java文件执行clinit，而这两个变量已经有了值，我们称之为常量。
+  
+  （2）使用改进的 For 循环语法
+　　改进 for 循环（有时被称为 for-each 循环）能够用于实现了 iterable 接口的集合类及数组中。在集合类中，迭代器让接口调用 hasNext() 和 next() 方法。在 ArrayList 中，手写的计数循环迭代要快 3 倍（无论有没有JIT），但其他集合类中，改进的 for 循环语法和迭代器具有相同的效率。下面展示集中访问数组的方法：
+
+
+[java] view plain copy
+static class Foo {  
+       int mSplat;  
+   }  
+   Foo[] mArray = ...  
+   public void zero() {  
+       int sum = 0;  
+       for (int i = 0; i < mArray.length; ++i) {  
+           sum += mArray[i].mSplat;  
+       }  
+   }  
+   public void one() {  
+       int sum = 0;  
+       Foo[] localArray = mArray;  
+       int len = localArray.length;  
+   
+       for (int i = 0; i < len; ++i) {  
+           sum += localArray[i].mSplat;  
+       }  
+   }  
+   public void two() {  
+       int sum = 0;  
+       for (Foo a : mArray) {  
+           sum += a.mSplat;  
+       }  
+   }  
+}  
+
+
+　　在 zero() 中，每次循环都会访问两次静态成员变量，取得一次数组的长度。
+　　在 one() 中，将所有成员变量存储到本地变量。
+　　two() 使用了在 Java1.5 中引入的 foreach 语法。编译器会将对数组的引用和数组的长度保存到本地变量中，这对访问数组元素非常好。 但是编译器还会在每次循环中产生一个额外的对本地变量的存储操作（对变量 a 的存取）这样会比 one() 多出 4 个字节，速度要稍微慢一些。
+       使用foreach方法循环效率是很高，但是在并发的环境下，很有可能引起concurrentModifyException。
+
+（3）避免使用浮点数
+　　通常的经验是，在 Android 设备中，浮点数会比整型慢两倍，在缺少 FPU 和 JIT 的 G1 上对比有 FPU 和 JIT 的 Nexus One 中确实如此（两种设备间算术运算的绝对速度差大约是 10 倍）从速度方面说，在现代硬件上，float 和 double 之间没有任何不同。更广泛的 讲，double 大 2 倍。在台式机上，由于不存在空间问题，double 的优先级高于 float。但即使是整型，有的芯片拥有硬件乘法，却缺少除法。这种情况下，整型除法和求模运算是通过软件实现的，就像当你设计 Hash 表，或是做大量的算术那样，例如 a/2 可以换成 a*0.5。
+
+ （4）了解并使用类库
+　　选择 Library 中的代码而非自己重写，除了通常的那些原因外，考虑到系统空闲时会用汇编代码调用来替代 library 方法，这可能比 JIT 中生成的等价的最好的 Java 代码还要好。
+           i.    当你在处理字串的时候，不要吝惜使用 String.indexOf()，String.lastIndexOf() 等特殊实现的方法。这些方法都是使用 C/C++ 实现的，比起 Java 循环快 10 到 100 倍。
+           ii.   System.arraycopy 方法在有 JIT 的 Nexus One 上，自行编码的循环快 9 倍。
+           iii.  android.text.format 包下的 Formatter 类，提供了 IP 地址转换、文件大小转换等方法；DateFormat 类，提供了各种时间转换，都是非常高效的方法。
+　　　　　详细请参考 http://developer.android.com/reference/android/text/format/package-summary.html
+           iv.  TextUtils 类
+　　　　　对于字符串处理 Android 为我们提供了一个简单实用的 TextUtils 类，如果处理比较简单的内容不用去思考正则表达式不妨试试这个在 android.text.TextUtils 的类，详细请参考http://developer.android.com/reference/android/text/TextUtils.html
+            v.  高性能MemoryFile类。
+　　很多人抱怨 Android 处理底层 I/O 性能不是很理想，如果不想使用 NDK 则可以通过 MemoryFile 类实现高性能的文件读写操作。MemoryFile 适用于哪些地方呢？对于 I/O 需要频繁操作的，主要是和外部存储相关的 I/O 操作，MemoryFile 通过将 NAND 或 SD 卡上的文件，分段映射到内存中进行修改处理，这样就用高速的 RAM 代替了 ROM 或 SD 卡，性能自然提高不少，对于 Android 手机而言同时还减少了电量消耗。该类实现的功能不是很多，直接从 Object 上继承，通过 JNI 的方式直接在 C 底层执行。
+详细请参考 http://developer.android.com/reference/android/os/MemoryFile.html
+在此，只简单列举几个常用的类和方法，更多的是要靠平时的积累和发现。多阅读 Google 给的帮助文档时很有益的。
+（5）合理利用本地方法
+　　本地方法并不是一定比 Java 高效。最起码，Java 和 native 之间过渡的关联是有消耗的，而 JIT 并不能对此进行优化。当你分配本地资源时（本地堆上的内存，文件说明符等），往往很难实时的回收这些资源。同时你也需要在各种结构中编译你的代码（而非依赖 JIT）。甚至可能需要针对相同的架构 来编译出不同的版本：针对 ARM 处理器的 GI 编译的本地代码，并不能充分利用 Nexus One 上的 ARM，而针对 Nexus One 上 ARM 编译的本地代码不能在 G1 的 ARM 上运行。当你想部署程序到存在本地代码库的 Android 平台上时，本地代码才显得尤为有用，而并非为了 Java 应用程序的提速。
+（6）复杂算法尽量用 C 完成
+　　复杂算法尽量用 C 或者 C++ 完成，然后用 JNI 调用。但是如果是算法比较单间，不必这么麻烦，毕竟 JNI 调用也会花一定的时间。请权衡。
+（7）减少不必要的全局变量
+　　尽量避免 static 成员变量引用资源耗费过多的实例，比如 Context ，避免内存泄露(后面针对内存泄露会有详细介绍)。Android 提供了很健全的消息传递机制 (Intent) 和任务模型 (Handler)，可以通过传递或事件的方式，防止一些不必要的全局变量。
+（8）不要过多指望 GC
+　　Java 的 gc 使用的是一个有向图，判断一个对象是否有效看的是其他的对象能到达这个对象的顶点，有向图的相对于链表、二叉树来说开销是可想而知。所以不要过多指望 gc。将不用的对象可以把它指向 NULL，并注意代码质量。同时，显示让系统 gc 回收，例如图片处理时，
+if(bitmap.isRecycled()==false) {
+   bitmap.recycle();
+}
+（9）了解 Java 四种引用方式
+　　JDK 1.2 版本开始，把对象的引用分为 4 种级别，从而使程序能更加灵活地控制对象的生命周期。这 4 种级别由高到低依次为：强引用、软引用、弱引用和虚引用。
+　　i.    强引用（StrongReference）
+　　强引用是使用最普遍的引用。如果一个对象具有强引用，那垃圾回收器绝不会回收它。当内存空间不足，Java 虚拟机宁愿抛出 OutOfMemoryError 错误，使程序异常终止，也不会靠随意回收具有强引用的对象来解决内存不足的问题。
+　　ii.    软引用（SoftReference）
+　　如果一个对象只具有软引用，则内存空间足够，垃圾回收器就不会回收它；如果内存空间不足了，就会回收这些对象的内存。只要垃圾回收器没有回收它，该对象就可以被程序使用。软引用可用来实现内存敏感的高速缓存。
+　　iii.    弱引用（WeakReference）
+　　在垃圾回收器线程扫描它所管辖的内存区域的过程中，一旦发现了只具有弱引用的对象，不管当前内存空间足够与否，都会回收它的内存。不过，由于垃圾回收器是一个优先级很低的线程，因此不一定会很快发现那些只具有弱引用的对象。
+　　iv.    虚引用（PhantomReference）
+　　顾名思义，就是形同虚设。与其他几种引用都不同，虚引用并不会决定对象的生命周期。如果一个对象仅持有虚引用，那么它就和没有任何引用一样，在任何时候都可能被垃圾回收器回收。了解并熟练掌握这 4 中引用方式，选择合适的对象应用方式，对内存的回收是很有帮助的。
+　
+（10）使用实体类比接口好
+假设你有一个 HashMap 对象，你可以将它声明为 HashMap 或者 Map：
+Map map1 = new HashMap();
+HashMap map2 = new HashMap();
+哪个更好呢？
+按照传统的观点 Map 会更好些，因为这样你可以改变他的具体实现类，只要这个类继承自 Map 接口。传统的观点对于传统的程序是正确的，但是它并不适合嵌入式系统，因为这涉及到一个上下转型的问题。调用一个接口的引用会比调用实体类的引用多花费一倍的时间。如果 HashMap 完全适合你的程序，那么使用 Map 就没有什么价值。如果有些地方你不能确定，先避免使用 Map，剩下的交给 IDE 提供的重构功能好了。（当然公共 API 是一个例外：一个好的 API 常常会牺牲一些性能）
+（11）避免使用枚举
+枚举变量非常方便，但不幸的是它会牺牲执行的速度和并大幅增加文件体积。例如：
+public class Foo {
+   public enum Shrubbery { GROUND, CRAWLING, HANGING }
+}
+
+会产生一个900字节的.class文件(Foo$Shubbery.class)。在它被首次调用时，这个类会调用初始化方法来准备每个枚举变 量。每个 枚举项都会被声明成一个静态变量，并被赋值。然后将这些静态变量放在一个名为”$VALUES”的静态数组变量中。而这么一大堆代码，仅仅是为了使用三个 整数。
+这样：Shrubbery shrub =Shrubbery.GROUND；会引起一个对静态变量的引用，如果这个静态变量是 final int，那么编译器会直接内联这个常数。
+一方面说，使用枚举变量可以让你的 API 更出色，并能提供编译时的检查。所以在通常的时候你毫无疑问应该为公共 API 选择枚举变量。但是当性能方面有所限制的时候，你就应该避免这种做法了。
+有些情况下，使用 ordinal() 方法获取枚举变量的整数值会更好一些，举例来说：
+
+
+
+[java] view plain copy
+for(int n =0; n < list.size(); n++) {  
+   if(list.items[n].e == MyEnum.VAL_X) {  
+       // do something  
+   } else if(list.items[n].e == MyEnum.VAL_Y) {  
+       // do something  
+   }  
+}  
+替换为：
+
+[java] view plain copy
+int valX = MyEnum.VAL_X.ordinal();  
+int valY = MyEnum.VAL_Y.ordinal();  
+int count = list.size();  
+MyItem items = list.items();  
+for(int n =0; n < count; n++) {  
+   intvalItem = items[n].e.ordinal();  
+   if(valItem == valX) {  
+       // do something  
+   } else if(valItem == valY) {  
+       // do something  
+   }  
+}  
+会使性能得到一些改善，但这并不是最终的解决之道。
+
+
+（12）将与内部类一同使用的变量声明在包范围内
+
+请看下面的类定义：
+
+
+[java] view plain copy
+public class Foo {    
+   private class Inner {    
+       void stuff() {    
+           Foo.this.doStuff(Foo.this.mValue);    
+       }    
+   }    
+        
+   private int mValue;    
+   public void run() {    
+   Inner in = new Inner();    
+       mValue = 27;    
+       in.stuff();    
+   }    
+        
+   private void doStuff(int value) {    
+       System.out.println("Value is " + value);    
+   }    
+}  
+
+
+这其中的关键是，我们定义了一个内部类(Foo$Inner)，它需要访问外部类的私有域变量和函数。这是合法的，并且会打印出我们希望的结果 Value is 27。问题是在技术上来讲（在幕后）Foo$Inner 是一个完全独立的类，它要直接访问 Foo 的私有成员是非法的。要跨越这个鸿沟，编译器需要生成一组方法：
+
+/*package*/ static int Foo.access$100(Foo foo) {  
+/*package*/ static void Foo.access$200(Foo foo, int value) {  
+}
+内部类在每次访问 mValue 和 doStuff 方法时，都会调用这些静态方法。就是 说，上面的代码说明了一个问题，你是在通过接口方法访问这些成员变量和函数而不是直接调用它们。在前面我们已经说过，使用接口方法（getter、 setter）比直接访问速度要慢。所以这个例子就是在特定语法下面产生的一个“隐性的”性能障碍。
+通过将内部类访问的变量和函数声明由私有范围改为包范围，我们可以避免这个问题。这样做可以 让代码运行更快，并且避免产生额外的静态方法。（遗憾的是，这些域和方法可以被同一个包内的其他类直接访问，这与经典的 OO 原则相违背。因此当你设计公共  API 的时候应该谨慎使用这条优化原则）。
+
+（13）缓存
+适量使用缓存，不要过量使用，因为内存有限，能保存路径地址的就不要存放图片数据，不经常使用的尽量不要缓存，不用时就清空。在一些比较耗时的算法，且执行会有若干次的地方，加入LruCache，后期会详细讲解缓存的使用和注意事项
+ 
+
+（14）关闭资源对象
+
+对 SQLiteOpenHelper，SQLiteDatabase，Cursor，文件，I/O 操作等都应该记得显示关闭。
+
+  好了，以上的一些内容都是在编写Android应用的时候，最基本需要注意的优化方面的知识。之后的文章，将会深入讲解在Android应用开发中的各个方面的性能优化问题。
