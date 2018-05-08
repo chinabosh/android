@@ -1,0 +1,87 @@
+转载自：https://blog.csdn.net/allbule/article/details/52674574
+具体图片也在上面网址中qaq
+
+ViewPager简介：
+
+ViewPager是android扩展包v4包中的类，这个类可以让用户左右切换当前的view。
+
+1）ViewPager类直接继承了ViewGroup类，所有它是一个容器类，可以在其中添加其他的view类。
+
+2）ViewPager类需要一个PagerAdapter适配器类给它提供数据。
+
+3）ViewPager经常和Fragment一起使用，并且提供了专门的FragmentPagerAdapter和FragmentStatePagerAdapter类供Fragment中的ViewPager使用。
+
+对于PagerAdapter类，必须至少实现如下的4个方法，如果需要更好的扩展也可以实现更多的方法。
+
+public Object instantiateItem(ViewGroup container, int position)
+
+public void destroyItem(ViewGroup container, int position,Object object)
+
+public int getCount()
+
+public boolean isViewFromObject(View arg0, Object arg1)
+
+FragmentStatePagerAdapter简介以及其工作过程 
+显然如果要实现上面的这么几种方法，操作起来复杂多了，Gogle提供了一个PagerAdapter的子类FragmentStatePagerAdapter来协助处理很多细节问题，以简化操作。
+
+使用FragmentStatePagerAdapter需要重写他的俩个方法： 
+1）Fragment getItem(int position)：该方法返回当前的Fragment，交给相关联的Activity。
+
+2）int getCount（）：该方法返回数组列表包含的项目数。
+
+在PageActivity中：
+
+ ...
+
+ ViewPager viewPager=(ViewPager) findViewById(R.id.activity_pager_view);
+    viewPager.setAdapter(new FragmentStatePagerAdapter(fragmentManager) {
+        @Override
+        public Fragment getItem(int position) {
+            NoteBookItem item=mList.get(position);         //mlist是当前要加载的数组列表
+            Log.e("PageActivity","position is: "+position);
+            Log.e("PageActivity","uuid is: "+item.getUUID().toString());
+            return PageFragment.newInstance(item.getUUID());         //返回一个PageFragment
+        }
+
+        @Override
+        public int getCount() {
+           return mList.size();
+        }
+    });
+
+点击第一项，当跳转到PageActivity，查看打印信息： 
+PageActivity: position is: 1 
+PageActivity: uuid is: cae9e2c3-6fd1-46b1-8f76-dc6149388f93
+
+PageActivity: position is: 0 
+PageActivity: uuid is: 232cc96d-eda9-4e10-a859-e3af4bcba587
+
+PageActivity: position is: 2 
+PageActivity: uuid is: 1b23b9f5-79ce-4de6-9b79-011a5d96a1b3
+
+也就是说FragmentStatePagerAdapter在此过程中创建并返回了三个Fragment，ViewPager默认加载当前屏幕上的列表项，以及左右相邻页面的数据，以便能流畅的滑动ViewPager。
+
+举个例子，如下图：
+
+FragmentStatePagerAdapter的Fragment加载过程
+
+当点击了ListActivity列表中的Item1，跳转到Item1对应的Fragment，这时候FragmentStatePagerAdapter的getItem（int position）方法就会被调用三次，分别返回三个Fragment给Activity，先返回的是Item1的Fragment做为当前与用户交互的Fragment，然后再分别去加载左右相邻的Fragment，也就是Item0与Item2，并且他们都会缓存各自Item的信息。
+
+FragmentStatePagerAdapter与FragmentPagerAdapter的区别：
+
+俩种方法基本一致，唯一的区别在于：卸载不需要的fragment时，各自采用的方法不同。FragmentStatePagerAdapter会销毁不需要的Fragment，FragmentManager中的Fragment会被彻底移除掉，而FragmentPagerAdapter不会销毁实例，实例保存在FragmentManager中，它只是把视图销毁掉。
+
+FragmentStatePagerAdapter的Fragment管理如下图：
+
+FragmentStatePagerAdapter的Fragment管理 
+图.FragmentStatePagerAdapter的Fragment管理
+
+当滑动屏幕时（从Item1滑动到Item2），Item0的视图以及实例都将被销毁，同时ViewPager回去缓存Item3的Fragment（Item1的已经缓存过故不重复缓存）
+
+FragmentPagerAdapter的Fragment管理如下图：
+
+FragmentPagerAdapter的Fragment管理
+
+同样，当滑动时FragmentPagerAdapter只是销毁了Item0的View视图，实例依然保存在FragmentManager中。
+
+另外，FragmentStatePagerAdapter可在onSaveInstanceState（Bundle）中保存fragment的Bundle信息。显然FragmentPagerAdapter更占用内存。
