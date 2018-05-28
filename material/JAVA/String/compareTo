@@ -1,0 +1,2 @@
+"abc".compareTo("aaf") 值为1
+"abc",compareTo("acf")值为-1
