@@ -1,0 +1,1 @@
+ButterKnife BindView使用的class一定要是public不然会报错
