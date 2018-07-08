@@ -1,3 +1,5 @@
+
+//双重校检
 public class Singleton {  
     private volatile static Singleton singleton;
     
@@ -14,3 +16,21 @@ public class Singleton {
     return singleton;  
     }  
 } 
+
+//枚举
+
+class Resource{
+}
+
+public enum SomeThing {
+    INSTANCE;
+    private Resource instance;
+    SomeThing() {
+        instance = new Resource();
+    }
+    public Resource getInstance() {
+        return instance;
+    }
+}
+
+//调用： SomeThing.INSTANCE.getInstance;
