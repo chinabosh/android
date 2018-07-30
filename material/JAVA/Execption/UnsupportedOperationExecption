@@ -1,0 +1,7 @@
+
+public class Test{
+ 	private Test(){
+		//不支持操作，运行过程中报错
+		throw new UnsupportedOperationExecption("cannot be initialize");
+	}
+}	
