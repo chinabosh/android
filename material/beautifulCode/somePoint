@@ -1,0 +1,13 @@
+1.equals
+  String str;
+  //bad
+  if(str != null && str.equals("")){
+  //do something
+  }
+  //good
+  if("".equals(str)){
+  //do something
+  }
+  
+  
+  
