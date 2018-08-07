@@ -1,0 +1,9 @@
+//IllegalArgumentException此异常表明向方法传递了一个不合法或不正确的参数。
+/**
+     * Sets the dispatcher used to set policy and execute asynchronous requests. Must not be null.
+     */
+    public Builder dispatcher(Dispatcher dispatcher) {
+      if (dispatcher == null) throw new IllegalArgumentException("dispatcher == null");
+      this.dispatcher = dispatcher;
+      return this;
+    }

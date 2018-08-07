@@ -1,0 +1,16 @@
+  各种Execption整理总结
+  
+  1.主动抛出异常是为了增加程序的健壮性。
+  2.可以让代码更专注于处理核心的业务逻辑，而不需要写一大堆判断去兼容各种情况，
+  例如：
+  public Builder readTimeout(long timeout, TimeUnit unit) {
+      if (timeout < 0) throw new IllegalArgumentException("timeout < 0");
+      if (unit == null) throw new NullPointerException("unit == null");
+      long millis = unit.toMillis(timeout);
+      if (millis > Integer.MAX_VALUE) throw new IllegalArgumentException("Timeout too large.");
+      if (millis == 0 && timeout > 0) throw new IllegalArgumentException("Timeout too small.");
+      readTimeout = (int) millis;
+      return this;
+    }
+
+	以上这段代码从retrofit中拿的，在这里做主动抛出异常后，可以确保readTimeout这个参数的正确性，其他地方可以放心的使用。

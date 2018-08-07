@@ -1,0 +1,10 @@
+//按目前的理解：应该使用于library或者工具类，表示一些方法不支持调用，
+//调用了可能会导致更多的错误.
+//而且提供了报错信息，便于调试
+public class Test{
+ 	private Test(){
+		//不支持操作，运行过程中报错
+		throw new UnsupportedOperationExecption("cannot be initialize");
+	}
+}	
+
