@@ -1,0 +1,110 @@
+转载自：https://blog.csdn.net/weixin_37618354/article/details/80117652
+
+本来想使用showAsDrop但是在系统为4.4的版本上不显示弹框，具体原因没有深入研究。后来毅然决然使用showAtLocation显示，代码如下:
+
+int[] outLocation = new int[2];
+view.getLocationInWindow(outLocation);
+int y = outLocation[1] + view.getHeight();
+showAtLocation(view, Gravity.NO_GRAVITY, 0, y);
+
+但是发现在5.1的系统版本上会上移一段距离，对比其源码发现PopupWindow对其版本及之后的版本做了一个全屏模式的处理。 
+5.0源码：
+
+  public void setContentView(View contentView) {
+        if (isShowing()) {
+            return;
+        }
+
+        mContentView = contentView;
+
+        if (mContext == null && mContentView != null) {
+            mContext = mContentView.getContext();
+        }
+
+        if (mWindowManager == null && mContentView != null) {
+            mWindowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        }
+    }
+
+
+5.1源码：
+
+    public void setContentView(View contentView) {
+        if (isShowing()) {
+            return;
+        }
+
+        mContentView = contentView;
+
+        if (mContext == null && mContentView != null) {
+            mContext = mContentView.getContext();
+        }
+
+        if (mWindowManager == null && mContentView != null) {
+            mWindowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        }
+
+        // Setting the default for attachedInDecor based on SDK version here
+        // instead of in the constructor since we might not have the context
+        // object in the constructor. We only want to set default here if the
+        // app hasn't already set the attachedInDecor.
+        if (mContext != null && !mAttachedInDecorSet) {
+            // Attach popup window in decor frame of parent window by default for
+            // {@link Build.VERSION_CODES.LOLLIPOP_MR1} or greater. Keep current
+            // behavior of not attaching to decor frame for older SDKs.
+            setAttachedInDecor(mContext.getApplicationInfo().targetSdkVersion
+                    >= Build.VERSION_CODES.LOLLIPOP_MR1);
+        }
+
+    }
+
+
+多出了这一部分：
+
+ // Setting the default for attachedInDecor based on SDK version here
+        // instead of in the constructor since we might not have the context
+        // object in the constructor. We only want to set default here if the
+        // app hasn't already set the attachedInDecor.
+        if (mContext != null && !mAttachedInDecorSet) {
+            // Attach popup window in decor frame of parent window by default for
+            // {@link Build.VERSION_CODES.LOLLIPOP_MR1} or greater. Keep current
+            // behavior of not attaching to decor frame for older SDKs.
+            setAttachedInDecor(mContext.getApplicationInfo().targetSdkVersion
+                    >= Build.VERSION_CODES.LOLLIPOP_MR1);
+
+
+在看其setAttachedInDecor方法，代码如下：
+
+ public void setAttachedInDecor(boolean enabled) {
+        mAttachedInDecor = enabled;
+        mAttachedInDecorSet = true;
+    }
+
+在这里看出用了两个Boolean变量标记状态，那么咱们继续往下追，看它们在哪个地方使用，最终定位到：
+
+   private int computeFlags(int curFlags) {
+        curFlags &= ~(
+                WindowManager.LayoutParams.FLAG_IGNORE_CHEEK_PRESSES |
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE |
+                WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH |
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS |
+                WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM |
+                WindowManager.LayoutParams.FLAG_SPLIT_TOUCH);
+        ....
+        if (mAttachedInDecor) {
+          curFlags |= WindowManager.LayoutParams.FLAG_LAYOUT_ATTACHED_IN_DECOR;
+        }
+        return curFlags;
+    }
+
+
+在这里我们发现使用了“ WindowManager.LayoutParams.FLAG_LAYOUT_ATTACHED_IN_DECOR”（当布局依附于窗口时, 所依附的窗口可能会覆盖在屏幕装饰之上, 比如导航栏. 设置此flag后, window manager将在decor窗口内对所依附的窗口进行布局, 这样便不会覆盖在屏幕装饰上），由此找到问题的原因了。有一个可行的办法是在activity里getWidnow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);让布局可以延伸到状态栏，这的确解决了popupwindow覆盖状态栏的问题，但是你的顶部布局也会延伸到状态栏，所以还需要做一些调试的工作。另一个可行的方式是针对针对版本做判断，代码如下：
+
+int[] outLocation = new int[2];
+view.getLocationInWindow(outLocation);
+int y = outLocation[1] + view.getHeight()+(PhoneUtil.hasLollipop_MR1()? 0: UIHelper.getStatusBarHeight(getContext()) );
+showAtLocation(view, Gravity.NO_GRAVITY, 0, y);
+
+
+就是说如果系统版本大于22则不加上通知栏的高度，如果小于则加上通知栏的高度，自此整个问题解决了。
