@@ -1,0 +1,10 @@
+  Set<String> set = new HashSet<String>();
+  set.add("test1");
+  set.add("test2");
+  set.add("test3");
+  
+  //返回一个不可修改的视图
+  Set tmp = Collections.unmodifiableSet(set);
+  
+  //this will cause java.lang.UnsupportedOperationException
+  tmp.add("1");
