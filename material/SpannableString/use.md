@@ -12,7 +12,7 @@ Spanned.SPAN_EXCLUSIVE_INCLUSIVE 从起始下标到终了下标，包括终了�
 
 SpannableString的setSpan()方法可以同时使用多个，实现多种效果叠加。
 
-e.g.
+#e.g.
 
 ##1.ForegroundColorSpan，为文本设置前景色，效果和TextView的setTextColor()类似，实现方法如下：
 
