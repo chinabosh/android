@@ -1,5 +1,5 @@
 作者：码农小阿飞CoderMario
-链接：![](http://www.jianshu.com/p/84067ad289d2)
+[链接](http://www.jianshu.com/p/84067ad289d2)
 來源：简书
 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
 
@@ -12,23 +12,23 @@ Spanned.SPAN_EXCLUSIVE_INCLUSIVE 从起始下标到终了下标，包括终了�
 
 SpannableString的setSpan()方法可以同时使用多个，实现多种效果叠加。
 
-#e.g.
+# e.g.
 
-##1.ForegroundColorSpan，为文本设置前景色，效果和TextView的setTextColor()类似，实现方法如下：
+## 1.ForegroundColorSpan，为文本设置前景色，效果和TextView的setTextColor()类似，实现方法如下：
 
 SpannableString spannableString = new SpannableString("设置文字的前景色为淡蓝色");
 ForegroundColorSpan colorSpan = new ForegroundColorSpan(Color.parseColor("#0099EE"));
 spannableString.setSpan(colorSpan, 9, spannableString.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE); 
 textView.setText(spannableString);
 
-##2.BackgroundColorSpan，为文本设置背景色，效果和TextView的setBackground()类，实现方法如下：
+## 2.BackgroundColorSpan，为文本设置背景色，效果和TextView的setBackground()类，实现方法如下：
 
 SpannableString spannableString = new SpannableString("设置文字的背景色为淡绿色");
 BackgroundColorSpan colorSpan = new BackgroundColorSpan(Color.parseColor("#AC00FF30"));
 spannableString.setSpan(colorSpan, 9, spannableString.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
 textView.setText(spannableString);
 
-##3.RelativeSizeSpan，设置文字相对大小，在TextView原有的文字大小的基础上，相对设置文字大小，实现方法如下：
+## 3.RelativeSizeSpan，设置文字相对大小，在TextView原有的文字大小的基础上，相对设置文字大小，实现方法如下：
 
 SpannableString spannableString = new SpannableString("万丈高楼平地起");
 
@@ -49,35 +49,35 @@ spannableString.setSpan(sizeSpan06, 5, 6, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
 spannableString.setSpan(sizeSpan07, 6, 7, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
 textView.setText(spannableString);
 
-##4.StrikethroughSpan，为文本设置中划线，也就是常说的删除线，实现方法如下：
+## 4.StrikethroughSpan，为文本设置中划线，也就是常说的删除线，实现方法如下：
 
 SpannableString spannableString = new SpannableString("为文字设置删除线");
 StrikethroughSpan strikethroughSpan = new StrikethroughSpan();
 spannableString.setSpan(strikethroughSpan, 5, spannableString.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
 textView.setText(spannableString);
 
-##5.UnderlineSpan，为文本设置下划线，具体实现方法如下：
+## 5.UnderlineSpan，为文本设置下划线，具体实现方法如下：
 
 SpannableString spannableString = new SpannableString("为文字设置下划线");
 UnderlineSpan underlineSpan = new UnderlineSpan();
 spannableString.setSpan(underlineSpan, 5, spannableString.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
 textView.setText(spannableString);
 
-##6.SuperscriptSpan，设置上标，具体实现方法如下：
-//若是上标显示不完全，设置下padding
+## 6.SuperscriptSpan，设置上标，具体实现方法如下：
+> 若是上标显示不完全，设置下padding
 SpannableString spannableString = new SpannableString("为文字设置上标");
 SuperscriptSpan superscriptSpan = new SuperscriptSpan();
 spannableString.setSpan(superscriptSpan, 5, spannableString.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
 textView.setText(spannableString);
 
-##7.SubscriptSpan，设置下标，功能与设置上标类似，不做过多描述，具体实现方法如下：
-//若是下标显示不完全，设置下padding
+## 7.SubscriptSpan，设置下标，功能与设置上标类似，不做过多描述，具体实现方法如下：
+> 若是下标显示不完全，设置下padding
 SpannableString spannableString = new SpannableString("为文字设置下标");
 SubscriptSpan subscriptSpan = new SubscriptSpan();
 spannableString.setSpan(subscriptSpan, 5, spannableString.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
 textView.setText(spannableString);
 
-##8.StyleSpan，为文字设置风格（粗体、斜体），和TextView属性textStyle类似，实现方法如下：
+## 8.StyleSpan，为文字设置风格（粗体、斜体），和TextView属性textStyle类似，实现方法如下：
 
 SpannableString spannableString = new SpannableString("为文字设置粗体、斜体风格");
 StyleSpan styleSpan_B  = new StyleSpan(Typeface.BOLD);
@@ -87,7 +87,7 @@ spannableString.setSpan(styleSpan_I, 8, 10, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
 textView.setHighlightColor(Color.parseColor("#36969696"));
 textView.setText(spannableString);
 
-##9.ImageSpan，设置文本图片，实现方法如下：
+## 9.ImageSpan，设置文本图片，实现方法如下：
 
 SpannableString spannableString = new SpannableString("在文本中添加表情（表情）");
 Drawable drawable = getResources().getDrawable(R.mipmap.a9c);
@@ -96,7 +96,7 @@ ImageSpan imageSpan = new ImageSpan(drawable);
 spannableString.setSpan(imageSpan, 6, 8, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
 textView.setText(spannableString);
 
-##10.ClickableSpan，设置可点击的文本，设置这个属性的文本可以相应用户点击事件，至于点击事件用户可以自定义，就像效果图显示一样，用户可以实现点击跳转页面的效果，具体实现方法如下：
+## 10.ClickableSpan，设置可点击的文本，设置这个属性的文本可以相应用户点击事件，至于点击事件用户可以自定义，就像效果图显示一样，用户可以实现点击跳转页面的效果，具体实现方法如下：
 
 SpannableString spannableString = new SpannableString("为文字设置点击事件");
 MyClickableSpan clickableSpan = new MyClickableSpan("http://www.jianshu.com/users/dbae9ac95c78");
