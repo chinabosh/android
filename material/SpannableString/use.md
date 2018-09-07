@@ -64,14 +64,14 @@ spannableString.setSpan(underlineSpan, 5, spannableString.length(), Spanned.SPAN
 textView.setText(spannableString);
 
 ## 6.SuperscriptSpan，设置上标，具体实现方法如下：
-> 若是上标显示不完全，设置下padding
+> 若是上标显示不完全，设置下padding <
 SpannableString spannableString = new SpannableString("为文字设置上标");
 SuperscriptSpan superscriptSpan = new SuperscriptSpan();
 spannableString.setSpan(superscriptSpan, 5, spannableString.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
 textView.setText(spannableString);
 
 ## 7.SubscriptSpan，设置下标，功能与设置上标类似，不做过多描述，具体实现方法如下：
-> 若是下标显示不完全，设置下padding
+> 若是下标显示不完全，设置下padding <
 SpannableString spannableString = new SpannableString("为文字设置下标");
 SubscriptSpan subscriptSpan = new SubscriptSpan();
 spannableString.setSpan(subscriptSpan, 5, spannableString.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
