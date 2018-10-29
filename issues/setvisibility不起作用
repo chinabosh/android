@@ -12,12 +12,12 @@
     android:orientation="vertical"
     android:focusableInTouchMode="true"
     android:focusable="true"
-    tools:context="com.ylz.emergency.activity.SearchOrderActivity">
+    >
 
-    <com.ylzinfo.library.widget.titlebar.Titlebar
+    <com.library.widget.titlebar.Titlebar
         style="@style/TitleBar"
         app:titlebar_leftDrawable="@drawable/back"
-        app:titlebar_titleText="搜索结果"
+        app:titlebar_titleText="。。。"
         />
 
     <LinearLayout
@@ -25,14 +25,14 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/grid_10"
         android:orientation="horizontal">
-        <com.ylzinfo.library.widget.edittext.ClearEditText
+        <com.library.widget.edittext.ClearEditText
             android:id="@+id/et_search"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:padding="@dimen/grid_10"
             android:background="@color/bg_edit_text"
-            android:hint="搜索委派单号或援助人姓名"
+            android:hint="。。。"
             android:drawableLeft="@drawable/search"
             android:drawablePadding="@dimen/grid_10"/>
 
@@ -45,7 +45,7 @@
             android:background="@drawable/bg_btn_corner"
             android:padding="@dimen/button_padding"
             android:textColor="@color/white"
-            android:text="搜索"/>
+            android:text="。。。"/>
     </LinearLayout>
 
 
@@ -55,9 +55,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        android:text="当前委派单"/>
+        android:text="。。。"/>
 
-    <com.ylzinfo.library.widget.recyclerview.SuperRecyclerView
+    <com.library.widget.recyclerview.SuperRecyclerView
         android:id="@+id/srv_cur"
         android:layout_width="match_parent"
         android:layout_height="100dp"
@@ -68,7 +68,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        android:text="未支付委派单"/>
+        android:text="。。。"/>
 
     <com.ylzinfo.library.widget.recyclerview.SuperRecyclerView
         android:id="@+id/srv_no_pay"
@@ -81,9 +81,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        android:text="历史委派单"/>
+        android:text="。。。"/>
 
-    <com.ylzinfo.library.widget.recyclerview.SuperRecyclerView
+    <com.library.widget.recyclerview.SuperRecyclerView
         android:id="@+id/srv_history"
         android:layout_width="match_parent"
         android:layout_height="200dp"
