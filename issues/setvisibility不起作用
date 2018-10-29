@@ -1,0 +1,126 @@
+网上搜索的结果基本都是说设置了动画，需要clearAnimation
+但是我没有设置动画，也出现这种结果，
+经过2小时不断尝试各种办法，后来发现了问题所在！！！
+
+先上布局
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
+    tools:context="com.ylz.emergency.activity.SearchOrderActivity">
+
+    <com.ylzinfo.library.widget.titlebar.Titlebar
+        style="@style/TitleBar"
+        app:titlebar_leftDrawable="@drawable/back"
+        app:titlebar_titleText="搜索结果"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/grid_10"
+        android:orientation="horizontal">
+        <com.ylzinfo.library.widget.edittext.ClearEditText
+            android:id="@+id/et_search"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="@dimen/grid_10"
+            android:background="@color/bg_edit_text"
+            android:hint="搜索委派单号或援助人姓名"
+            android:drawableLeft="@drawable/search"
+            android:drawablePadding="@dimen/grid_10"/>
+
+        <TextView
+            android:id="@+id/tv_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/grid_15"
+            android:layout_marginRight="@dimen/grid_15"
+            android:background="@drawable/bg_btn_corner"
+            android:padding="@dimen/button_padding"
+            android:textColor="@color/white"
+            android:text="搜索"/>
+    </LinearLayout>
+
+
+
+    <TextView
+        android:id="@+id/tv_cur"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="当前委派单"/>
+
+    <com.ylzinfo.library.widget.recyclerview.SuperRecyclerView
+        android:id="@+id/srv_cur"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/tv_no_pay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="未支付委派单"/>
+
+    <com.ylzinfo.library.widget.recyclerview.SuperRecyclerView
+        android:id="@+id/srv_no_pay"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/tv_history"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="历史委派单"/>
+
+    <com.ylzinfo.library.widget.recyclerview.SuperRecyclerView
+        android:id="@+id/srv_history"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:visibility="gone"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/grid_10"
+        android:background="#000000"
+        >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/stretcher"/>
+
+        <TextView
+            android:id="@+id/tv_back"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/grid_20"
+            android:layout_marginRight="@dimen/grid_15"
+            android:layout_marginLeft="@dimen/grid_15"
+            android:background="@drawable/bg_btn_corner_blue_light"
+            android:gravity="center_horizontal"
+            android:padding="@dimen/button_padding"
+            android:textColor="@color/white"
+            android:text="返回首页"/>
+
+    </RelativeLayout>
+
+</LinearLayout>
+
+这个布局在一般情况下是不会有问题的，但是项目中自定义的SuperRecyclerView中也有空布局，恰巧这个空布局的id也是rl_empty，和RelativeLayout冲突，导致
+对RelativeLayout调用setVisibili不起作用。（看来规范有时候也会害人，手动滑稽，还不容易发现问题所在！）
+
