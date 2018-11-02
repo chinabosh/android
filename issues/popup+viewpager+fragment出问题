@@ -1,0 +1,27 @@
+popup+viewpager+fragment出问题
+问题如下：
+No view found for id 0x7f080135 (com.xxx.xxx:id/viewpager) for fragment PopupWindow
+转载解决方案：https://blog.csdn.net/u011814346/article/details/80198414
+
+最近在开发项目中，遇到了一个问题。PopupWindow中无法嵌套viewpager+Fragment，现在进行总结一下。
+
+问题描述：在Fragment中弹出一个PopupWindow,PopupWindow中用viewpager加载多个Fragment时出现上面问题。
+
+网上搜的都是那些什么没有设置id之类的东西，或者getSupportFragmentManager()替换成getChildFragmentManager()之类的，但是这个问题不是在这里。调试了源码看到FragmentManager是属于activity的，而popwindow是使用了其他的layout，所以FragmentManager找不到viewpager的id。
+
+问题原因分析：因为FragmentAdapter传入的是Activity的FragmentManger，所以默认是在Activity的布局xml中寻找ViewPager的定义，但是实际上它是在弹出的View里定义的。
+
+解决方法：前三个都是网上推荐的，本人用的是方法二；后来自己研究了一下，得出方法四。
+
+方法一：放弃使用PopupWindow使用DialogFragment
+
+方法二：不要用fragment在popupwindow中 ，可以换成view在pageadaper中
+
+方法三：既然在popwindow获取不了对应的FragmentManager，换个思路，先在popwindow中放一个fragment，再 在这个fragment中放viewpager+fragment，fragment中获取的FragmentManager，使用getChildFragmentManager()。问题解决了。
+
+方法四：重写activity的findviewbyid 方法，fragment的寻找id的方式是用activity找的。如图
+--------------------- 
+作者：lijetlove 
+来源：CSDN 
+原文：https://blog.csdn.net/u011814346/article/details/80198414 
+版权声明：本文为博主原创文章，转载请附上博文链接！
