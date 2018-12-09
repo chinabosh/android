@@ -1,0 +1,4 @@
+  在开发的时候碰到一个问题：在library中写了一些自定义view，比如SuperRecyclerView，但是在写布局文件时，却不像写TextView一样，你可能写个Te，
+As就会把完整的TextView提示出来，需要自己把完整的library的路径写完，而且写属性的时候也不会有提示，这就像在纸上写代码，很痛苦。
+  在网上查询了一番，发现了问题。是因为我的主module（app）的compileSdkVersion 为28，而library的compileSdkVersion 为27，
+只要把这两个值改为相同的就可以。当然还要修改引用的support库，这个版本也要相同
