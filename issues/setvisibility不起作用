@@ -89,6 +89,7 @@
         android:layout_height="200dp"
         android:visibility="gone"/>
 
+<-- 这里的id是重点！！！！ !-->
     <RelativeLayout
         android:id="@+id/rl_empty"
         android:layout_width="match_parent"
