@@ -7,9 +7,11 @@ No view found for id 0x7f080135 (com.xxx.xxx:id/viewpager) for fragment PopupWin
 
 问题描述：在Fragment中弹出一个PopupWindow,PopupWindow中用viewpager加载多个Fragment时出现上面问题。
 
-网上搜的都是那些什么没有设置id之类的东西，或者getSupportFragmentManager()替换成getChildFragmentManager()之类的，但是这个问题不是在这里。调试了源码看到FragmentManager是属于activity的，而popwindow是使用了其他的layout，所以FragmentManager找不到viewpager的id。
+网上搜的都是那些什么没有设置id之类的东西，或者getSupportFragmentManager()替换成getChildFragmentManager()之类的，但是这个问题不是在这里。
+调试了源码看到FragmentManager是属于activity的，而popwindow是使用了其他的layout，所以FragmentManager找不到viewpager的id。
 
-问题原因分析：因为FragmentAdapter传入的是Activity的FragmentManger，所以默认是在Activity的布局xml中寻找ViewPager的定义，但是实际上它是在弹出的View里定义的。
+问题原因分析：因为FragmentAdapter传入的是Activity的FragmentManger，所以默认是在Activity的布局xml中寻找ViewPager的定义，
+但是实际上它是在弹出的View里定义的。
 
 解决方法：前三个都是网上推荐的，本人用的是方法二；后来自己研究了一下，得出方法四。
 
