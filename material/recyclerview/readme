@@ -1,2 +1,0 @@
-//TODO recyclerview viewholder实现原理
-//tips inflate出来的view不能add两次，为什么viewholder可以？
