@@ -1,14 +1,5 @@
-版权声明：本文为博主原创文章，未经博主允许不得转载。	https://blog.csdn.net/hbyh632/article/details/78728118
-
-ScrollView嵌套RecyclerView，当我离开当前页面，然后又回来时，RecyclerView就会把它上边的控件都挤出页面，它显示在页面最上边。
-
-原因应该是RecyclerView抢了焦点，只需要把ScrollView中最上边的那个控件加上几句代码就可以解决这个问题。
-
- android:focusable="true"
- android:focusableInTouchMode="true" 
-这个哥们timshinlee提供了一个更简单的方法，只需一行代码就可以搞定。
-
-我们知道，ScrollView下只能包裹一个控件，所以我们常用ScrollView包裹一个LinearLayout（或RelativeLayout），然后再包裹我们的其他控件（比如RecyclerView等），那一行代码就写在LinearLayout（或RelativeLayout）上。
+我们知道，ScrollView下只能包裹一个控件，所以我们常用ScrollView包裹一个LinearLayout（或RelativeLayout），
+然后再包裹我们的其他控件（比如RecyclerView等），那一行代码就写在LinearLayout（或RelativeLayout）上。
 
 <LinearLayout
  android:layout_width="match_parent"
@@ -32,5 +23,4 @@ Must be one of the following constant values.
     afterDescendants：viewgroup只有当其子类控件不需要获取焦点时才获取焦点
 
     blocksDescendants：viewgroup会覆盖子类控件而直接获得焦点
-本来我以为beforeDescendants也可以起作用，可事实证明我还是太天真了，只能用block，block的意思是阻止。
 
