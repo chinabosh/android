@@ -1,0 +1,40 @@
+      英文原版地址：https://flutter.io/docs/get-started/editor
+  你可以通过任意结合我们命令行工具的编辑器来开发flutter的app。但是，我们比较推荐用我们的编辑器插件来获得更好的体验。这些插件提供了代码自动补全、
+语法高亮显示、控件编辑支持、运行调试支持等等功能。
+  你可以通过以下步骤来在Android Studio、IntelliJ、VS Code中添加插件。如果你想要一个不一样的编辑器，也行！跳到下一步：Test drive。
+  
+  Android Studio/IntelliJ：
+   1. AS为Flutter提供了完整的编辑器体验。
+      https://developer.android.com/studio 下载版本3.0或者以上。
+  
+      或者你可以使用IntelliJ：
+      https://www.jetbrains.com/idea/download/ 社区版2017.1或以上
+      https://www.jetbrains.com/idea/download/ 专业版2017.1或以上
+  
+   2.下载Flutter Dart 插件
+      步骤：
+      1.打开Android Studio
+      2.打开插件设置（macOS上：Preferences > Plugins ，window或linux：File > Settings > Plugins）
+      3.选择插件浏览器、输入Flutter，下载Flutter插件
+      4.当提示到下载Dart，点击是来下载
+      5.下载成功后，重启
+      
+  Visual Studio Code：
+    1.VS Code 是一款开发Flutter应用的轻量级编辑器。
+      https://code.visualstudio.com/ 下载最新稳定版本
+    
+    2.下载Flutter Dart 插件
+      1.打开VS Code
+      2.进入View > Command Palette….
+      3.输入“install”， 选择 Extensions: Install Extensions.
+      4.在搜索框中输入flutter， 选中flutter，点击下载，这也会吧Dart下载下来
+      5.点击Reload to Activate来重启VS Code
+      
+    3.通过Flutter Doctor来更新你的配置
+      1.进入View > Command Palette…
+      2.输入“doctor”，选择Flutter: Run Flutter Doctor
+      3.查看OUTPUT中出现的问题
+    
+    
+  
+  
