@@ -1,4 +1,4 @@
-#消息队列
+#消息队列  
   Message中用静态链表方式维护一个消息队列  
   `private static Message sPool;`  
   在没有使用的时候，sPool为空。可以通过Message.obtain()来获取消息池

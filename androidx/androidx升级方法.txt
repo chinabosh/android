@@ -1,0 +1,10 @@
+1.在gradle.propertied增加一下配置
+	android.useAndroidx=true
+	android.enableJetifier=true
+2.AndroidStudio 升级到3.2或者更高版本
+Refactor > Migrate to AndroidX
+手动更改控件的包名，包括import中的、布局文件xml中的
+具体改变可参考  androidx包变化.txt
+
+3.一些热门的第三方库都会支持androidx，所以到对应库的github主页可查看该库
+的哪个版本开始支持androidx，其他不支持的只能找其他替代方法。
