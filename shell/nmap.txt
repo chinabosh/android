@@ -1,0 +1,108 @@
+用法：nmap [Scan Type(s)] [Options] {target specification}
+TARTGET SPECIFICATION:
+  可以通过主机、ip、网络等等
+  例子：scanme.nmap.org,microsoft.com/24,192.168.0.1,10.0.0-255.1-254
+  -iL <文件名>: 输入一串域名或者网络地址
+  -iR <数量 主机>: 根据域名选择一定数量的随机目标
+  --exclude <主机1[,主机2][,主机3],...>: 排除一些主机或网络
+  --excludefile <文件>: 根据文件内容排除一些网络
+HOST DISCOVERY:
+  -sL: 列表扫描 - 简单的扫描一些目标
+  -sn: ping扫描 - 禁用端口扫描
+  -Pn: 把所有主机当成在线 -- 跳过扫描主机
+  -PS/PA/PU/PY[端口列表]: 对指定端口进行TCP SYN/ACK，UDP，SCTP扫描
+  -PE/PP/Pm: 查询Internet控制报文协议，时间戳，网络请求
+  -PO[协议列表]: IP协议
+  -n/-R: 从不做DNS处理/总是处理[默认：有时做]
+  --dns-servers <serv1[,serv2],...>:指定DNS服务器
+  --system-dns: 使用系统的DNS策略
+  --traceroute: 查出每个主机的跃点路径
+SCAN TECHNIQUES:
+  -sS/sT/sA/sW/sM: TCP SYN/Connect()/ACK/Window/Maimon scans
+  -sU: UDP 扫描
+  -sN/sF/sX: TCP Null, FIN, Xmas 扫描
+  --scanflags <flags>: 定制TCP扫描参数
+  -sI <zombie host[:probeport]>: 懒扫描
+  -sY/sZ: SCTP INIT/COOKIE-ECHO scans
+  -sO: IP协议扫描
+  -b <FTP relay host>: FTP bounce scan
+PORT SPECIFICATION AND SCAN ORDER:
+  -p <port ranges>: 只扫描特定端口
+    例子：-p22; -p1-65535; -p U:53,111,137,T:21-25,80,139,8080,S:9
+  --exclude-ports <port ranges>: 不扫描一些端口
+  -F: 快速模块 - 比默认的扫描更少的端口
+  -r: 连续的扫描端口 - 不随机
+  --top-ports <number>: 至多扫描一定数量端口
+  --port-ratio <ratio>: 扫描比一定比率更多的端口
+SERVICE/VERSION DETECTION:
+  -sV: 查询开放的端口来探测服务和版本信息
+  --version-intentsity <level>: 范围：0（轻微）～9（尝试所有探测)
+  --version-light: 限制到最有可能探测（intensity 2)
+  --version-all: 尝试所有探测（intensity 9）
+  --version-trace: 显示具体的版本探测活动（为了debugging）
+SCRIPT SCAN:
+  -sC: 相当于 --script-default
+  --script=<lua scripts>: <lua scripts> 是一些以逗号隔开的directories,script-files 或者 script-categories
+  --script-args=<n1=v1,[n2=v2,...]>: 为脚本提供参数
+  --script-args-file=filename: 在文件中提供NSE script 参数
+  --script-trace: 显示所有发送和接收的数据  
+  --script-updatedb: 更新 脚本数据库
+  --script-help=<lua scripts>: 显示关于脚本的帮助
+		<lua scripts> 是一些以逗号隔开的script-files或script-categories
+OS DETECTION:
+  -O: 启用操作系统探测
+  --osscan-limit: 限制操作系统探测
+  --osscan-guess: 更积极的猜测操作系统
+TIMING AND PERFORMANCE:
+  take <time> 的单位默认为妙，可以在时间后加'ms'(毫秒),'s'(秒),'m'(分钟),'h'
+  (小时),例子（30m)
+  -T<0-5>: 设置时间模版，（越大越快）
+  --min-hostgroup/max-hostgroup <size>: 并行主机扫描的数量
+  --min-parallelism/max-parallelism <numprobes>: 探测并行量
+  --min-rtt-timeout/max-rtt-timeout/initial-rtt-timeout <time>: 特殊探测超市时间
+  --max-retries <tries>: 端口扫描探测重试次数
+  --host-timeout <time>: 经过time后放弃扫描目标
+  --scan-delay/--max-scan-delay <time>: 探测间延迟
+  --min-rate <number>: 每秒发送的包不小于 number
+  --max-rate <number>: 每秒发送的包不多于 number
+FIREWALL/IDS EVASION AND SPOOFING:
+  -f; --mtu <val>: 碎片包
+  -D <decoy1,decoy2[,ME],...>: 通过诱饵遮盖扫描
+  -S <IP_Address>: 模仿资源地址
+  -e <iface>: 用特别的接口
+  -g/--source-port <portnum>: 用指定的端口
+  --proxies <url1, [url2],...>: 通过HTTP/SCOKS4 代理转发链接
+  --data <hex string>: 插入一个普通的负载来发送包
+  --data-string <string>: 插入一个普通的ASCII 字符串来发送包
+  --data-length <num>: 插入随机数据来发送包
+  --ip-options <options>: 通过特殊ip选项来发送包
+  --ttl <val>: 设置IP存活时间区域
+  --spoof-mac <mac address/prefix/vendor name>: 模仿mac地址
+  --badsum: 发送伪造TCP/UDP/SCTP checksum 的包
+OUTPUT:
+  -oN/-oX/-oS/-oG <file>: 输出扫描通过普通，XML，Kiddi3或Grepable format到指定文件
+  -oA <basename>: 一次性输出三种主要格式
+  -v: 增加冗余水平 （使用-vv 或者更多v来增加更多冗余）
+  -d: 增加debugging水平（使用-dd或者更多d）
+  --reason: 展示一个端口在特定状态的原因
+  --open: 只显示开放的端口
+  --packet-trace: 显示所有发送和接收的包
+  --iflist: 打印主机接口和路径（for debugging）
+  --append-output: 插入而不是替换一些特定输出文件
+  --resume <filename>: 恢复一个停止的扫描
+  --stylesheet <path/URL>: XSL 来将XML转换为HTML
+  --webxml: 参考Nmap.org获取stylesheet，为了更多轻便的XML
+  --no-stylesheet: 防止支持 XSL stylesheet
+MISC:
+  -6: 启用IPv6扫描  
+  -A: 启用操作系统探测，版本探测，脚本扫描和路径追踪
+  --datadir <dirname>: 确定普通Nmap 数据文件路径
+  --send-eth/--send-ip: 通过以太网或者Ip发送包
+  --privileged: 保证用户有完全的特权
+  --unprivileged: 保证用户没有特权
+  -V: 打印版本号
+  -h: 打印这个帮助信息
+EXAMPLES:
+  nmap -v -A scanme.nmap.org
+  nmap -v -sn 192.168.0.0/16 10.0.0.0/8
+  nmap -v -iR 10000 -Pn -p 80
