@@ -1,0 +1,22 @@
+1. def shellArgs1 = "1"
+   task executeShell(type: Exec) {
+	executable 'sh'
+	args "-C", "../shellDemo.sh $shellArgs1" 
+   }  
+
+   in shellDemo.sh:
+	args = $1
+	echo args
+	...
+
+2. def doSomething(String target){
+	exec {
+		executable "some.sh"
+		args "-t", target
+	}
+   }
+   task doIt{
+	doLast{
+		doSomething("../")
+	}
+   }
