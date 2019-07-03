@@ -1,0 +1,12 @@
+  问题来源：kotlin组件化开发，module中使用butterknife
+  报错：No static field tv_test of type I in class Lcom/bosh/module_kotlin/R$id; or its superclasses
+  其中tv_test是个控件的id
+  问题分析：
+  壳app模块中使用的是MainActivity，module中也是使用的MainActivity,然后很悲催的
+。事发生了，两个的布局文件都是activity_main，然后tv_test的导包都是
+  import kotlinx.android.synthetic.main.activity_main.*
+  貌似是module中的控件找错地方，所以找不到
+  解决方法：
+  把module中的布局文件改为kotlin_activity_main，搞定！
+  另外多说一点，组建化开发为了避免资源冲突，最好资源名称都带上[module name]_
+  例如kotlin_activity_main

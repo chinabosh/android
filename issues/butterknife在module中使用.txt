@@ -1,0 +1,25 @@
+  1.在projecct的build.gradel中加入
+	buildscript{
+	    ...
+	    dependencies {
+		...
+		classpath 'com.jakewharton:butterknife-gradle-plugin:10.1.0'
+	    }
+	}
+	
+	ext {
+	    butterknifeVersion = "10.1.0"
+	}
+  2.module的build.gradle中加入
+	apply plugin: 'ccom.jakewharton.butterknife'
+	android {
+	    ...
+	    compileOptions {
+		sourceCompatibility JavaVersion.VERSION_1_8
+		targetCompatibility JAvaVersion.VERSION_1_8
+	    }
+	dependencies {
+	    api "com.jakewharton:butterknife:$rootProject.ext.butterknifeVersion"
+	    annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.ext.butterknifeVersion"
+	}
+  3.module中的代码全部使用R2代替R
