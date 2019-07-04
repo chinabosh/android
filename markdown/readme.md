@@ -122,7 +122,7 @@
 在前三个反引号后面还可以加上语言种类，如java
 
 ## <span id="10">十、流程图</span>
-  
+目前github不支持流程图，需要自己加载插件，很麻烦  
 ```flow
 st => start: start
 op1 => operation: op
@@ -133,7 +133,7 @@ st -> op1 -> cond
 cond(yes, right) -> op1
 cond(no) -> e
 ```
-<script src="mermaid.full.min.js"></script>
+<script src="mermaid-8.1.0/src/mermaid.js"></script>
 
 <div class="mermaid">
 graph TB
