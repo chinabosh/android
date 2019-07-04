@@ -122,15 +122,25 @@
 在前三个反引号后面还可以加上语言种类，如java
 
 ## <span id="10">十、流程图</span>
+  
+```flow
+st => start: start
+op1 => operation: op
+cond => condition: sure？
+e => end: end
 
-```flow  
-st=>start: 开始
-op1=>operation: 操作
-cond=>condition: 确认？
-e=>end: 结束
-cond(yes)->op1
-cond(no)->e
+st -> op1 -> cond
+cond(yes, right) -> op1
+cond(no) -> e
 ```
+<script src="mermaid.full.min.js"></script>
+
+<div class="mermaid">
+graph TB
+A --> B;
+B --> C;
+C --> D;
+</div>
 
 >参考[高鸿祥：Markdown基本语法](https://www.jianshu.com/p/191d1e21f7ed)
 
