@@ -1,0 +1,5 @@
+1.在setting.gradle中添加外部library的文件地址，绝对路径以及相对路径都可以，
+project(':module_demo').projectDir = new File('../demo_module/module_demo')
+inclue ':app','module_demo'
+2.在相应模块依赖
+api project(':module_demo')

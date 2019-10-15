@@ -1,0 +1,5 @@
+#使用uiautomatorviewer查看层次布局
+位置ANDROID_HOME/tools/bin/uiautonmatorviewer
+优点：可以显示任意布局的层次
+缺点：信息没有layout inspector多
+ps：layout inspector只能查看debug包的布局
