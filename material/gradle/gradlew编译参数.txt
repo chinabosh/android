@@ -1,2 +1,5 @@
 gradlew --profile  可以将编译的详细用时生成html报告，以便查看哪个任务的
                    编译速度有问题
+	--refresh-dependencies build时带上可以强制刷新第三方库依赖
+
+gradlew :app:dependencies 查看依赖情况
