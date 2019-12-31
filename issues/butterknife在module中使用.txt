@@ -22,4 +22,15 @@
 	    api "com.jakewharton:butterknife:$rootProject.ext.butterknifeVersion"
 	    annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.ext.butterknifeVersion"
 	}
-  3.module中的代码全部使用R2代替R
+  3.module中的代码全部使用R2代替R,module中的@OnClick，不能使用switch而要用if else, @OnClick中要使用R2，
+  而if else里面则要使用R
+  如：
+  @OnClick({R2.id.test1, R2.id.test2})
+  public void onClick(View view){
+    int id = view.getId();
+    if (id == R.id.test1) {
+
+    } else if (id == R.id.test2){
+
+    }
+  }

@@ -1,1 +1,4 @@
-Github上有个很坑爹的问题：不能区分大小写，而且还不能在网页上直接删除文件夹！如果你有一个文件夹Test，还有另一个文件夹test，那么你clone到本地后只会有一个文件夹Test，要是你两个文件夹中刚好有同名的readme，然后你刚好改了其中一个readme，那你就难受了，你git add一下会发现另一个readme也被修改了，我的解决办法是，用命令rm -r Test删除Test,然后git status ,用git rm 删除其中一个Test文件的文件，push到服务器，再把另一个test文件git checkout出来，这样本地只有一个test，远程也只有一个test，切记下次不要再取之有大小写不一样的文件名了！！！
+Github上有个很坑爹的问题：不能区分大小写，而且还不能在网页上直接删除文件夹！如果你有一个文件夹Test，还有另一个文件夹test，
+那么你clone到本地后只会有一个文件夹Test，要是你两个文件夹中刚好有同名的readme，然后你刚好改了其中一个readme，那你就难受了，
+你git add一下会发现另一个readme也被修改了，我的解决办法是，用命令rm -r Test删除Test,然后git status ,用git rm 删除其中一个Test文件的文件，
+push到服务器，再把另一个test文件git checkout出来，这样本地只有一个test，远程也只有一个test，切记下次不要再取之有大小写不一样的文件名了！！！

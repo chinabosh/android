@@ -1,1 +1,7 @@
 hashmap 解析
+
+1.initialCapacity
+用来指定初识容量，默认为16
+当 hashmap要存储的容量 > 16 * 负载因子（默认0。75）时，会hashmap会扩容，这个比较影响性能
+因此如果能预测要放置多少个元素，最好指定initialCapacity，提高性能，而且因为hashmap的实际容量
+是2的n次幂，所以建议initialCapacity设置成2的n次幂。

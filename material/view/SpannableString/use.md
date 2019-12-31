@@ -1,9 +1,9 @@
 作者：码农小阿飞CoderMario
 [链接](http://www.jianshu.com/p/84067ad289d2)
 來源：简书
-著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。  
 
-setSpan(Object what, int start, int end, int flags)方法需要用户输入四个参数，what表示设置的格式是什么，可以是前景色、背景色也可以是可点击的文本等等，start表示需要设置格式的子字符串的起始下标，同理end表示终了下标，flags属性就有意思了，共有四种属性：
+setSpan(Object what, int start, int end, int flags)方法需要用户输入四个参数，what表示设置的格式是什么，可以是前景色、背景色也可以是可点击的文本等等，start表示需要设置格式的子字符串的起始下标，同理end表示终了下标，flags属性就有意思了，共有四种属性：  
 
 Spanned.SPAN_INCLUSIVE_EXCLUSIVE 从起始下标到终了下标，包括起始下标
 Spanned.SPAN_INCLUSIVE_INCLUSIVE 从起始下标到终了下标，同时包括起始下标和终了下标
@@ -15,7 +15,7 @@ SpannableString的setSpan()方法可以同时使用多个，实现多种效果�
 # e.g.
 
 ## 1.ForegroundColorSpan，为文本设置前景色，效果和TextView的setTextColor()类似，实现方法如下：
-```
+``` 
 SpannableString spannableString = new SpannableString("设置文字的前景色为淡蓝色");
 ForegroundColorSpan colorSpan = new ForegroundColorSpan(Color.parseColor("#0099EE"));
 spannableString.setSpan(colorSpan, 9, spannableString.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE); 
