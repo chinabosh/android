@@ -7,4 +7,4 @@ Refactor > Migrate to AndroidX
 具体改变可参考  androidx包变化.txt
 
 3.一些热门的第三方库都会支持androidx，所以到对应库的github主页可查看该库
-的哪个版本开始支持androidx，其他不支持的只能找其他替代方法。
+的哪个版本开始支持androidx，其他不支持的只能找其他替代方法。（注：androidx可以兼容support库，反过来不行）
