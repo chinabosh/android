@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-ifconfig |grep 192.168|cut -d ' ' -f2
+ifconfig en0|grep 'inet '|cut -d ' ' -f2
