@@ -3,3 +3,5 @@ gradlew --profile  可以将编译的详细用时生成html报告，以便查看
 	--refresh-dependencies build时带上可以强制刷新第三方库依赖
 
 gradlew :app:dependencies 查看依赖情况
+
+Gradle build -x lint 不执行lint检查任务

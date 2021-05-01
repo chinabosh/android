@@ -1,0 +1,2 @@
+匹配R.drawable.*中后缀不是_guard的,用于资源混淆排查
+R\.drawable\.(?!(.*_guard))
