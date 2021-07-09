@@ -1,0 +1,9 @@
+第一步；输入命令；sudo vim /etc/ppp/options (创建options文件)
+
+第二步；上述vim 代表在编辑该文件,进入到编辑界面 输入“i” 进行录入，
+
+plugin L2TP.ppp
+
+l2tpnoipsec
+
+然后点击“esc” 输入 :wq 写入并保存

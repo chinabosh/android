@@ -1,0 +1,22 @@
+android 8.0 会出现Only fullscreen opaque activities can request orientation
+
+解决方法:
+application 的 onCreate中调用下面方法
+//andriod8.0兼容
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.O && isTranslucentOrFloating()) {
+            fixOrientation();
+        }
+
+private boolean fixOrientation(){
+        try {
+            Field field = Activity.class.getDeclaredField("mActivityInfo");
+            field.setAccessible(true);
+            ActivityInfo o = (ActivityInfo)field.get(this);
+            o.screenOrientation = -1;
+            field.setAccessible(false);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }

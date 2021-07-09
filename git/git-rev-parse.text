@@ -1,0 +1,42 @@
+git rev-parse master^{commit} 是什么意思
+
+显示master提交的SHA1值
+
+if you want to make sure that the output actually names an object in your object database and/or can be used as a specific type of object you require, you can add the ^{type} peeling operator to the parameter. For example, git rev-parse "$VAR^{commit}" will make sure $VAR names an existing object that is a commit-ish (i.e. a commit, or an annotated tag that points at a commit). To make sure that $VAR names an existing object of any type, git rev-parse "$VAR^{object}" can be used.
+
+git rev-parse –-git-dir
+
+显示版本库.git目录所在的位置
+
+git rev-parse –-show-toplevel
+
+显示工作区根目录
+
+git rev-parse –-show-prefix
+
+显示相对于工作区根目录的相对路径
+
+git rev-parse –-show-cdup
+
+显示从当前目录(cd)后退(up)到工作区的根目录的深度
+
+git rev-parse --symbolic –-branches
+
+https://git-scm.com/docs/git-rev-parse
+
+show branch refs found in refs/heads/
+
+git rev-parse –-symbolic –-tags
+
+获取完整commit id（如：bb4f92a7d4cbafb67d259edea5a1fa2dd6b4cc7a）
+
+git rev-parse HEAD
+
+获取short commit id（如：bb4f92a）
+
+git rev-parse --short HEAD
+
+这里的rev应该是revision(修订/版本)的缩写
+
+show tag refs found in refs/tags/
+

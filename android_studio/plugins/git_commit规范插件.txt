@@ -1,0 +1,8 @@
+git commit templete
+Create a commit message with the following template:
+        <type>(<scope>): <subject>
+        <BLANK LINE>
+        <body>
+        <BLANK LINE>
+        <footer>
+
